@@ -11,7 +11,6 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from sklearn.feature_extraction.text import TfidfVectorizer
 from imblearn.over_sampling import RandomOverSampler
 
-# Set page configuration (hanya sekali di awal)
 st.set_page_config(page_title="Dashboard Analisis Sentimen", layout="wide")
 
 def train_model(model_name, X_train, X_test, y_train, y_test):
@@ -34,7 +33,6 @@ def train_model(model_name, X_train, X_test, y_train, y_test):
 
     return accuracy, precision, recall, f1, y_pred
 
-# Fungsi untuk menampilkan header
 def display_header():
     st.markdown("""
         <div style="text-align: center; padding: 15px; background-color: #4CAF50; border-radius: 10px;">
@@ -43,7 +41,6 @@ def display_header():
         </div>
     """, unsafe_allow_html=True)
 
-# Fungsi utama untuk menampilkan dashboard
 def show():
     display_header()
 
@@ -71,11 +68,9 @@ def show():
         if 'Komentar' in data.columns and 'Label' in data.columns:
             st.success("Dataset berhasil diunggah!")
 
-            # Display data preview
             with st.expander("Pratinjau Dataset"):
                 st.write(data.head())
 
-            # Preprocessing
             X = data['Komentar'].fillna("")
             y = data['Label']
             vectorizer = TfidfVectorizer()
@@ -85,7 +80,6 @@ def show():
             ros = RandomOverSampler(random_state=42)
             X_train, y_train = ros.fit_resample(X_train, y_train)
 
-            # Train model
             if st.button("Latih Model"):
                 with st.spinner("Melatih model..."):
                     accuracy, precision, recall, f1, y_pred = train_model(selected_model, X_train, X_test, y_train, y_test)
@@ -99,14 +93,13 @@ def show():
                     "F1-Score": f1
                 }
 
-                # Display metrics in cards
+
                 col1, col2, col3, col4 = st.columns(4)
                 col1.metric("Akurasi", f"{accuracy:.2%}")
                 col2.metric("Precision", f"{precision:.2%}")
                 col3.metric("Recall", f"{recall:.2%}")
                 col4.metric("F1-Score", f"{f1:.2%}")
 
-                # Visualisasi prediksi
                 sentiment_counts = pd.Series(y_pred).value_counts()
                 fig, ax = plt.subplots(figsize=(8, 4))
                 sns.barplot(x=sentiment_counts.index, y=sentiment_counts.values, ax=ax, palette="viridis")

@@ -101,7 +101,6 @@ def show():
                 if new_name != col:
                     rename_columns[col] = new_name
 
-        # Stopword Removal Options
         remove_stopwords = st.sidebar.checkbox("Stopword Removal Manual")
         auto_stopwords = st.sidebar.checkbox("Stopword Removal Otomatis")
         custom_stopwords = []
@@ -114,7 +113,6 @@ def show():
             )
             custom_stopwords = [word.strip().lower() for word in custom_stopwords_input.split(",") if word.strip()]
 
-        # Stemming Options
         apply_stemming = st.sidebar.checkbox("Stemming Manual")
         auto_stemming = st.sidebar.checkbox("Stemming Otomatis")
         custom_stems = {}

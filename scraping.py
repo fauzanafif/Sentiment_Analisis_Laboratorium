@@ -99,11 +99,23 @@ def video_comments(api_key, video_id):
 
     return replies
 
+def extract_tiktok_video_id(video_url):
+    import re
+    match = re.search(r'video/(\d+)', video_url)
+    if match:
+        return match.group(1)
+    else:
+        st.error("URL TikTok tidak valid.")
+        return None
+
 def scrape_tiktok_comments(video_url):
     try:
         api = TikTokApi()
-        video_id = api.get_video_id_from_url(video_url)
-        comments = api.video(video_id).comments()
+        video_id = extract_tiktok_video_id(video_url)
+        if video_id is None:
+            return []
+        
+        comments = api.video(id=video_id).comments()
         results = []
         for comment in comments:
             results.append({

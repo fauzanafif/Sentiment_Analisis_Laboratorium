@@ -1,0 +1,15 @@
+streamlit
+pillow
+pandas
+matplotlib
+seaborn
+wordcloud
+scikit-learn
+imblearn
+fpdf
+nltk
+Sastrawi
+google-api-python-client
+google-play-scraper
+tweepy
+TikTokApi
