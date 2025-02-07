@@ -11,8 +11,6 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 from imblearn.over_sampling import RandomOverSampler
-from io import BytesIO
-from fpdf import FPDF
 
 @st.cache_data
 def load_data(uploaded_file):
@@ -136,40 +134,27 @@ def show():
                     ax.tick_params(axis='x', labelsize=8)
                     st.pyplot(fig)
                 
-#                 with col4:
-#                     color_mapping = {
-#                     'Positif': 'green',
-#                     'Negatif': 'red',
-#                     'Netral': 'gray'
-# }
-#                     sentiment_counts = data['Label'].str.strip().str.capitalize().value_counts()
-#                     colors = [color_mapping.get(label, 'blue') for label in sentiment_counts.index]
-    
-#                     fig_pie, ax_pie = plt.subplots(figsize=(5, 3))
-#                     wedges, texts, autotexts = ax_pie.pie(
-#                     sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', colors=colors,
-#                     startangle=140, wedgeprops={'edgecolor': 'black'}, textprops={'fontsize': 4}
-#     )
-    
-#                     for text in texts + autotexts:
-#                         text.set_fontsize(5)
-    
-#                     st.pyplot(fig_pie)   
-#                     sentiment_counts = data['Label'].str.strip().str.capitalize().value_counts()
-    
-
-#                     colors = [color_mapping.get(label, 'blue') for label in sentiment_counts.index]
-    
-#                     fig_pie, ax_pie = plt.subplots(figsize=(5, 3))
-#                     wedges, texts, autotexts = ax_pie.pie(
-#                         sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', colors=colors,
-#                         startangle=140, wedgeprops={'edgecolor': 'black'}, textprops={'fontsize': 4}
-#     )
-    
-#                     for text in texts + autotexts:
-#                         text.set_fontsize(5)
-    
-#     st.pyplot(fig_pie)
+                with col4:
+                    st.subheader("📊 Distribusi Sentimen")
+                    color_mapping = {
+                        'Positif': 'green',
+                        'Negatif': 'red',
+                        'Netral': 'gray'
+                    }
+                    
+                    sentiment_counts = data['Label'].str.strip().str.capitalize().value_counts()
+                    colors = [color_mapping.get(label, 'blue') for label in sentiment_counts.index]
+                    
+                    fig_pie, ax_pie = plt.subplots(figsize=(5, 3))
+                    wedges, texts, autotexts = ax_pie.pie(
+                        sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', colors=colors,
+                        startangle=140, wedgeprops={'edgecolor': 'black'}
+                    )
+                    
+                    for text in texts + autotexts:
+                        text.set_fontsize(8)
+                    
+                    st.pyplot(fig_pie)
 
 if __name__ == "__main__":
     show()
