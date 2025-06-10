@@ -6,6 +6,48 @@ from io import BytesIO
 from google_play_scraper import reviews
 import tweepy
 
+def add_custom_css():
+    st.markdown("""
+        <style>
+        /* Gaya semua tombol */
+        div.stButton > button {
+            background-color: #483D8B !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 10px 16px !important;
+            font-size: 16px !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease !important;
+        }
+
+        div.stButton > button:hover {
+            background-color: #5A4DB8 !important;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(72, 61, 139, 0.4);
+        }
+
+        /* Gaya khusus untuk tombol download */
+        .stDownloadButton > button {
+            background-color: #483D8B !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 10px 16px !important;
+            font-size: 15px !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .stDownloadButton > button:hover {
+            background-color: #5A4DB8 !important;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(72, 61, 139, 0.4);
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+
 def download_file(df, file_format):
     buffer = BytesIO()
     if file_format == "CSV":
@@ -43,7 +85,7 @@ def scrape_twitter_v2(bearer_token, query, count=10):
             for tweet in response.data:
                 results.append({
                     "Tanggal": tweet.created_at,
-                    "User": "-",  # Tidak tersedia di API v2 standard
+                    "User": "-",
                     "Komentar": tweet.text,
                     "Likes": tweet.public_metrics.get('like_count', 0),
                     "Retweet": tweet.public_metrics.get('retweet_count', 0)
@@ -103,6 +145,8 @@ def video_comments(api_key, video_id):
     return replies
 
 def show():
+    add_custom_css()
+
     if "scraped_data" not in st.session_state:
         st.session_state.scraped_data = None
         st.session_state.scraped_columns = []
@@ -112,13 +156,13 @@ def show():
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        if st.button("Scraping YouTube"):
+        if st.button("🎥 Scraping YouTube"):
             st.session_state['platform'] = 'youtube'
     with col2:
-        if st.button("Scraping Twitter"):
+        if st.button("🐦 Scraping Twitter"):
             st.session_state['platform'] = 'twitter'
     with col3:
-        if st.button("Scraping PlayStore"):
+        if st.button("📱 Scraping PlayStore"):
             st.session_state['platform'] = 'playstore'
 
     platform = st.session_state.get('platform', 'youtube')
