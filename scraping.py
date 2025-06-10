@@ -26,7 +26,7 @@ def scrape_playstore(app_id, count=2000):
             reviews_data.append({
                 "Tanggal": review['at'],
                 "User": review['userName'],
-                "Komentar": review['content'],  # diseragamkan jadi Komentar
+                "Komentar": review['content'],
                 "Skor": review['score']
             })
         return reviews_data
@@ -34,20 +34,20 @@ def scrape_playstore(app_id, count=2000):
         st.error(f"Error scraping PlayStore: {str(e)}")
         return []
 
-def scrape_twitter(api_key, api_secret, access_token, access_token_secret, query, count=10):
+def scrape_twitter_v2(bearer_token, query, count=10):
     try:
-        auth = tweepy.OAuth1UserHandler(api_key, api_secret, access_token, access_token_secret)
-        api = tweepy.API(auth)
-        tweets = api.search_tweets(q=query, count=count, tweet_mode='extended')
+        client = tweepy.Client(bearer_token=bearer_token)
+        response = client.search_recent_tweets(query=query, max_results=count, tweet_fields=['created_at', 'lang', 'public_metrics'])
         results = []
-        for tweet in tweets:
-            results.append({
-                "Tanggal": tweet.created_at,
-                "User": tweet.user.screen_name,
-                "Komentar": tweet.full_text,  # diseragamkan jadi Komentar
-                "Likes": tweet.favorite_count,
-                "Retweet": tweet.retweet_count
-            })
+        if response.data:
+            for tweet in response.data:
+                results.append({
+                    "Tanggal": tweet.created_at,
+                    "User": "-",  # Tidak tersedia di API v2 standard
+                    "Komentar": tweet.text,
+                    "Likes": tweet.public_metrics.get('like_count', 0),
+                    "Retweet": tweet.public_metrics.get('retweet_count', 0)
+                })
         return results
     except Exception as e:
         st.error(f"Error scraping Twitter: {str(e)}")
@@ -68,7 +68,7 @@ def video_comments(api_key, video_id):
                 replies.append({
                     "Tanggal": published,
                     "User": user,
-                    "Komentar": comment,  # diseragamkan jadi Komentar
+                    "Komentar": comment,
                     "Likes": likeCount
                 })
 
@@ -81,7 +81,7 @@ def video_comments(api_key, video_id):
                         replies.append({
                             "Tanggal": published,
                             "User": user,
-                            "Komentar": repl,  # diseragamkan jadi Komentar
+                            "Komentar": repl,
                             "Likes": likeCount
                         })
 
@@ -142,14 +142,12 @@ def show():
 
     elif platform == 'twitter':
         st.subheader("🐦 Scraping Twitter")
-        api_key = st.text_input("API Key Twitter:")
-        api_secret = st.text_input("API Secret Twitter:")
-        access_token = st.text_input("Access Token Twitter:")
-        access_token_secret = st.text_input("Access Token Secret Twitter:")
+        bearer_token = st.text_input("Bearer Token Twitter:")
         query = st.text_input("Masukkan Query Pencarian Twitter:")
+        count = st.number_input("Jumlah Tweet", min_value=10, max_value=100, value=10, step=10)
         if st.button("Scrape Twitter"):
-            if all([api_key, api_secret, access_token, access_token_secret, query]):
-                tweets = scrape_twitter(api_key, api_secret, access_token, access_token_secret, query)
+            if bearer_token and query:
+                tweets = scrape_twitter_v2(bearer_token, query, count)
                 if tweets:
                     df = pd.DataFrame(tweets)
                     st.session_state.scraped_data = df
@@ -158,7 +156,7 @@ def show():
                     st.session_state.scraped_data = None
                     st.warning("Tidak ada data ditemukan atau terjadi kesalahan.")
             else:
-                st.warning("Silakan lengkapi semua data.")
+                st.warning("Silakan lengkapi Bearer Token dan Query.")
 
     elif platform == 'playstore':
         st.subheader("📱 Scraping PlayStore")
@@ -176,13 +174,11 @@ def show():
             else:
                 st.warning("Silakan masukkan ID aplikasi.")
 
-    # Menampilkan data yang telah di-scrape
     if st.session_state.scraped_data is not None:
         st.markdown("### 📋 Data yang telah di-scrape:")
         st.dataframe(st.session_state.scraped_data)
 
-        # Unduh data
-        st.markdown("### 💾 Simpan Data")
+        st.markdown("### 📂 Simpan Data")
         file_format = st.radio("Pilih format file:", ["CSV", "JSON"])
         buffer, mime_type = download_file(st.session_state.scraped_data, file_format)
         if buffer:
