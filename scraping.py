@@ -5,17 +5,10 @@ from googleapiclient.errors import HttpError
 from io import BytesIO
 from google_play_scraper import reviews
 import tweepy
-from TikTokApi import TikTokApi
-import sys
 
 def download_file(df, file_format):
     buffer = BytesIO()
-    if file_format == "Excel":
-        with pd.ExcelWriter(buffer, engine="xlsxwriter") as writer:
-            df.to_excel(writer, index=False, sheet_name="Sheet1")
-        buffer.seek(0)
-        return buffer, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    elif file_format == "CSV":
+    if file_format == "CSV":
         buffer.write(df.to_csv(index=False).encode("utf-8"))
         buffer.seek(0)
         return buffer, "text/csv"
@@ -31,10 +24,10 @@ def scrape_playstore(app_id, count=2000):
         reviews_data = []
         for review in result:
             reviews_data.append({
-                "Date": review['at'],
+                "Tanggal": review['at'],
                 "User": review['userName'],
-                "Content": review['content'],
-                "Score": review['score']
+                "Komentar": review['content'],  # diseragamkan jadi Komentar
+                "Skor": review['score']
             })
         return reviews_data
     except Exception as e:
@@ -49,11 +42,11 @@ def scrape_twitter(api_key, api_secret, access_token, access_token_secret, query
         results = []
         for tweet in tweets:
             results.append({
-                "Date": tweet.created_at,
+                "Tanggal": tweet.created_at,
                 "User": tweet.user.screen_name,
-                "Tweet": tweet.full_text,
+                "Komentar": tweet.full_text,  # diseragamkan jadi Komentar
                 "Likes": tweet.favorite_count,
-                "Retweets": tweet.retweet_count
+                "Retweet": tweet.retweet_count
             })
         return results
     except Exception as e:
@@ -72,7 +65,12 @@ def video_comments(api_key, video_id):
                 user = item['snippet']['topLevelComment']['snippet']['authorDisplayName']
                 comment = item['snippet']['topLevelComment']['snippet']['textDisplay']
                 likeCount = item['snippet']['topLevelComment']['snippet']['likeCount']
-                replies.append([published, user, comment, likeCount])
+                replies.append({
+                    "Tanggal": published,
+                    "User": user,
+                    "Komentar": comment,  # diseragamkan jadi Komentar
+                    "Likes": likeCount
+                })
 
                 if item['snippet']['totalReplyCount'] > 0:
                     for reply in item['replies']['comments']:
@@ -80,7 +78,12 @@ def video_comments(api_key, video_id):
                         user = reply['snippet']['authorDisplayName']
                         repl = reply['snippet']['textDisplay']
                         likeCount = reply['snippet']['likeCount']
-                        replies.append([published, user, repl, likeCount])
+                        replies.append({
+                            "Tanggal": published,
+                            "User": user,
+                            "Komentar": repl,  # diseragamkan jadi Komentar
+                            "Likes": likeCount
+                        })
 
             if 'nextPageToken' in video_response:
                 video_response = youtube.commentThreads().list(
@@ -99,62 +102,15 @@ def video_comments(api_key, video_id):
 
     return replies
 
-def extract_tiktok_video_id(video_url):
-    import re
-    match = re.search(r'video/(\d+)', video_url)
-    if match:
-        return match.group(1)
-    else:
-        st.error("URL TikTok tidak valid.")
-        return None
-
-def scrape_tiktok_comments(video_url):
-    try:
-        api = TikTokApi()
-        video_id = extract_tiktok_video_id(video_url)
-        if video_id is None:
-            return []
-        
-        comments = api.video(id=video_id).comments()
-        results = []
-        for comment in comments:
-            results.append({
-                "Date": comment.create_time,
-                "User": comment.author.username,
-                "Comment": comment.text,
-                "Likes": comment.digg_count
-            })
-        return results
-    except Exception as e:
-        st.error(f"Error scraping TikTok: {str(e)}")
-        return []
-
 def show():
     if "scraped_data" not in st.session_state:
         st.session_state.scraped_data = None
         st.session_state.scraped_columns = []
 
-    st.markdown(
-        """
-        <style>
-            .stButton>button {
-                background-color: #483D8B;
-                color: white;
-                border-radius: 5px;
-                padding: 5px 10px;
-            }
-            .stTextInput>div>input {
-                border: 2px solid #483D8B;
-                border-radius: 5px;
-            }
-        </style>
-        """, unsafe_allow_html=True
-    )
-
     st.title("📊 Scraping Data Berbasis Web")
     st.markdown("Selamat datang di aplikasi scraping data! Pilih platform yang ingin Anda scraping.")
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("Scraping YouTube"):
             st.session_state['platform'] = 'youtube'
@@ -164,9 +120,6 @@ def show():
     with col3:
         if st.button("Scraping PlayStore"):
             st.session_state['platform'] = 'playstore'
-    with col4:
-        if st.button("Scraping TikTok"):
-            st.session_state['platform'] = 'tiktok'
 
     platform = st.session_state.get('platform', 'youtube')
 
@@ -178,17 +131,17 @@ def show():
             if api_key and video_id:
                 comments = video_comments(api_key, video_id)
                 if comments:
-                    st.session_state.scraped_data = pd.DataFrame(comments, columns=['PublishedAt', 'User', 'Comment', 'Likes'])
-                    st.session_state.scraped_columns = ['PublishedAt', 'User', 'Comment', 'Likes']
+                    df = pd.DataFrame(comments)
+                    st.session_state.scraped_data = df
+                    st.session_state.scraped_columns = df.columns
                 else:
                     st.session_state.scraped_data = None
                     st.warning("Tidak ada komentar ditemukan atau Video ID salah.")
             else:
                 st.warning("Silakan masukkan API Key dan Video ID.")
 
-
     elif platform == 'twitter':
-        st.subheader("Scraping Twitter")
+        st.subheader("🐦 Scraping Twitter")
         api_key = st.text_input("API Key Twitter:")
         api_secret = st.text_input("API Secret Twitter:")
         access_token = st.text_input("Access Token Twitter:")
@@ -198,8 +151,9 @@ def show():
             if all([api_key, api_secret, access_token, access_token_secret, query]):
                 tweets = scrape_twitter(api_key, api_secret, access_token, access_token_secret, query)
                 if tweets:
-                    st.session_state.scraped_data = pd.DataFrame(tweets)
-                    st.session_state.scraped_columns = tweets[0].keys()
+                    df = pd.DataFrame(tweets)
+                    st.session_state.scraped_data = df
+                    st.session_state.scraped_columns = df.columns
                 else:
                     st.session_state.scraped_data = None
                     st.warning("Tidak ada data ditemukan atau terjadi kesalahan.")
@@ -207,49 +161,35 @@ def show():
                 st.warning("Silakan lengkapi semua data.")
 
     elif platform == 'playstore':
-        st.subheader("Scraping PlayStore")
+        st.subheader("📱 Scraping PlayStore")
         app_id = st.text_input("Masukkan ID Aplikasi PlayStore:")
         if st.button("Scrape PlayStore"):
             if app_id:
                 reviews_data = scrape_playstore(app_id)
                 if reviews_data:
-                    st.session_state.scraped_data = pd.DataFrame(reviews_data)
-                    st.session_state.scraped_columns = reviews_data[0].keys()
+                    df = pd.DataFrame(reviews_data)
+                    st.session_state.scraped_data = df
+                    st.session_state.scraped_columns = df.columns
                 else:
                     st.session_state.scraped_data = None
                     st.warning("Tidak ada data ditemukan atau terjadi kesalahan.")
             else:
                 st.warning("Silakan masukkan ID aplikasi.")
 
-    elif platform == 'tiktok':
-        st.subheader("Scraping TikTok")
-        video_url = st.text_input("Masukkan URL Video TikTok:")
-        if st.button("Scrape Komentar TikTok"):
-            if video_url:
-                tiktok_comments = scrape_tiktok_comments(video_url)
-                if tiktok_comments:
-                    st.session_state.scraped_data = pd.DataFrame(tiktok_comments)
-                    st.session_state.scraped_columns = tiktok_comments[0].keys()
-                else:
-                    st.session_state.scraped_data = None
-                    st.warning("Tidak ada data ditemukan atau terjadi kesalahan.")
-            else:
-                st.warning("Silakan masukkan URL Video TikTok.")
-
     # Menampilkan data yang telah di-scrape
     if st.session_state.scraped_data is not None:
-        st.markdown("### Data yang telah di-scrape:")
-        st.write(st.session_state.scraped_data)
+        st.markdown("### 📋 Data yang telah di-scrape:")
+        st.dataframe(st.session_state.scraped_data)
 
         # Unduh data
-        st.markdown("### Simpan Data")
-        file_format = st.radio("Pilih format file:", ["Excel", "CSV", "JSON"])
+        st.markdown("### 💾 Simpan Data")
+        file_format = st.radio("Pilih format file:", ["CSV", "JSON"])
         buffer, mime_type = download_file(st.session_state.scraped_data, file_format)
         if buffer:
             st.download_button(
-                label=f"Download {file_format}",
+                label=f"⬇️ Download {file_format}",
                 data=buffer,
-                file_name=f"scraped_data.{file_format.lower()}",
+                file_name=f"data_mentah.{file_format.lower()}",
                 mime=mime_type
             )
 

@@ -5,7 +5,7 @@ import modeling
 import preprocesing
 
 
-st.sidebar.image("sentilab.png", use_container_width=True)
+st.sidebar.image("sentilab.png")
 st.sidebar.title("Navigation")
 
 

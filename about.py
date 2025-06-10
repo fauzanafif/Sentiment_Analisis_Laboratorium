@@ -75,14 +75,14 @@ def show():
     #     unsafe_allow_html=True
     # )
 
-    st.markdown(
-        """
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="https://www.example.com" target="_blank" style="font-size: 18px; color: white; background-color: #483D8B; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Keunggulan SENTILAB</a>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # st.markdown(
+    #     """
+    #     <div style="text-align: center; margin-top: 20px;">
+    #         <a href="https://www.example.com" target="_blank" style="font-size: 18px; color: white; background-color: #483D8B; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Keunggulan SENTILAB</a>
+    #     </div>
+    #     """,
+    #     unsafe_allow_html=True
+    # )
 
     st.markdown(
         """
