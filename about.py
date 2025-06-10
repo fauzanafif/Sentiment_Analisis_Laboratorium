@@ -90,18 +90,15 @@ def show():
             <div style="flex: 1; min-width: 300px; max-width: 400px; background-color: #483D8B; color: white; padding: 20px; border-radius: 10px; text-align: center;">
                 <h3>EASY SCRAPING</h3>
                 <p>Scraping komentar dengan mudah dengan berbagai platform seperti youtube, X (Tweeter), Playstore</p>
-            #     <a href="Scraping\scraping.py" style="color: white; text-decoration: underline;">Baca Selengkapnya</a>
-            # </div>
+            </div>
             <div style="flex: 1; min-width: 300px; max-width: 400px; background-color: #483D8B; color: white; padding: 20px; border-radius: 10px; text-align: center;">
                 <h3>EASY PREPROCESING</h3>
                 <p>Preprocesing data lebih mudah dan cepat</p>
-            #     <a href="preprocesing.py" style="color: white; text-decoration: underline;">Baca Selengkapnya</a>
-            # </div>
+             </div>
             <div style="flex: 1; min-width: 300px; max-width: 400px; background-color: #483D8B; color: white; padding: 20px; border-radius: 10px; text-align: center;">
                 <h3>EASY MODELING</h3>
                 <p>Modeling dengan cepat menggunakan 5 model terpopuler yaitu Naive Bayes, SVM (Support Vector Mechine), KNN, Rndiom Forest, Adaboost</p>
-            #     <a href="modeling.py" style="color: white; text-decoration: underline;">Baca Selengkapnya</a>
-            # </div>
+            </div>
         </div>
         """,
         unsafe_allow_html=True
