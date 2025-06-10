@@ -1,4 +1,6 @@
+
 import streamlit as st
+st.cache_data.clear()
 import about
 import scraping as scraping
 import modeling
