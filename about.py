@@ -89,11 +89,11 @@ def show():
         <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px;">
             <div style="flex: 1; min-width: 300px; max-width: 400px; background-color: #483D8B; color: white; padding: 20px; border-radius: 10px; text-align: center;">
                 <h3>EASY SCRAPING</h3>
-                <p>Scraping komentar dengan mudah dengan berbagai platform seperti youtube, X (Tweeter), Playstore</p>
+                <p>Scraping komentar untuk mendapatkan data dengan mudah dengan berbagai platform seperti youtube, X (Tweeter), Playstore</p>
             </div>
             <div style="flex: 1; min-width: 300px; max-width: 400px; background-color: #483D8B; color: white; padding: 20px; border-radius: 10px; text-align: center;">
                 <h3>EASY PREPROCESING</h3>
-                <p>Preprocesing data lebih mudah dan cepat</p>
+                <p>Preprocesing data lebih mudah dan cepat di lengkapi fitur otomatis dan manual untuk kemudahan dan kedetailan pengguna</p>
              </div>
             <div style="flex: 1; min-width: 300px; max-width: 400px; background-color: #483D8B; color: white; padding: 20px; border-radius: 10px; text-align: center;">
                 <h3>EASY MODELING</h3>
