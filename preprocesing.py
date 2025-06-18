@@ -114,7 +114,7 @@ def clean_text(text, custom_stopwords, apply_stemming, custom_stems, auto_stopwo
 
 
     stop_words = set(stopwords.words('indonesian')) if auto_stopwords else set()
-    stop_words |= set(custom_stopwords)
+    stop_words = set(custom_stopwords)
     words = [w for w in words if w not in stop_words]
 
     if auto_stemming:
