@@ -1,6 +1,6 @@
 import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
+import nltk
+nltk.data.path.append('./nltk_data')
 import streamlit as st
 import pandas as pd
 import re
@@ -73,10 +73,16 @@ def clean_text(text, custom_stopwords, apply_stemming, custom_stems, auto_stopwo
     text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
     emoji_pattern = re.compile(
     "["
-    u"\U0001F600-\U0001F64F"  # emotikon wajah
-    u"\U0001F300-\U0001F5FF"  # simbol & pictographs
-    u"\U0001F680-\U0001F6FF"  # transportasi & simbol
-    u"\U0001F1E0-\U0001F1FF"  # flags (bendera negara)
+    u"\U0001F600-\U0001F64F"  # emoticon wajah
+    u"\U0001F300-\U0001F5FF"  # simbol dan pictographs
+    u"\U0001F680-\U0001F6FF"  # transportasi dan simbol
+    u"\U0001F1E0-\U0001F1FF"  # flags
+    u"\U00002700-\U000027BF"  # simbol lainnya
+    u"\U0001F900-\U0001F9FF"  # emoji tambahan
+    u"\U00002600-\U000026FF"  # simbol lainnya
+    u"\U0000200D"             # Zero Width Joiner
+    u"\U00002300-\U000023FF"  # simbol tambahan
+    u"\U0001FA70-\U0001FAFF"  # emoji lain (kompatibilitas baru)
     "]+", flags=re.UNICODE
 )
     text = emoji_pattern.sub(r'', text)

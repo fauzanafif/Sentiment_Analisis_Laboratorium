@@ -9,7 +9,6 @@ import tweepy
 def add_custom_css():
     st.markdown("""
         <style>
-        /* Gaya semua tombol */
         div.stButton > button {
             background-color: #483D8B !important;
             color: white !important;
@@ -27,7 +26,6 @@ def add_custom_css():
             box-shadow: 0 4px 12px rgba(72, 61, 139, 0.4);
         }
 
-        /* Gaya khusus untuk tombol download */
         .stDownloadButton > button {
             background-color: #483D8B !important;
             color: white !important;
@@ -46,7 +44,6 @@ def add_custom_css():
         }
         </style>
     """, unsafe_allow_html=True)
-
 
 def download_file(df, file_format):
     buffer = BytesIO()
@@ -176,6 +173,8 @@ def show():
                 comments = video_comments(api_key, video_id)
                 if comments:
                     df = pd.DataFrame(comments)
+                    kolom_urutan = ["Komentar"] + [col for col in df.columns if col != "Komentar"]
+                    df = df[kolom_urutan]
                     st.session_state.scraped_data = df
                     st.session_state.scraped_columns = df.columns
                 else:
@@ -194,6 +193,8 @@ def show():
                 tweets = scrape_twitter_v2(bearer_token, query, count)
                 if tweets:
                     df = pd.DataFrame(tweets)
+                    kolom_urutan = ["Komentar"] + [col for col in df.columns if col != "Komentar"]
+                    df = df[kolom_urutan]
                     st.session_state.scraped_data = df
                     st.session_state.scraped_columns = df.columns
                 else:
@@ -210,6 +211,8 @@ def show():
                 reviews_data = scrape_playstore(app_id)
                 if reviews_data:
                     df = pd.DataFrame(reviews_data)
+                    kolom_urutan = ["Komentar"] + [col for col in df.columns if col != "Komentar"]
+                    df = df[kolom_urutan]
                     st.session_state.scraped_data = df
                     st.session_state.scraped_columns = df.columns
                 else:
