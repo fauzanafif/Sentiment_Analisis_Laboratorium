@@ -1,11 +1,6 @@
-import nltk
-import nltk
-nltk.data.path.append('./nltk data')
 import streamlit as st
 import pandas as pd
 import re
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 
 stemmer_factory = StemmerFactory()
@@ -60,83 +55,75 @@ abbreviation_dict = {
 }
 
 def replace_abbreviations(text):
-    words = word_tokenize(text.lower())
+    words = text.lower().split()
     replaced = [abbreviation_dict.get(word, word) for word in words]
     return ' '.join(replaced)
 
 def clean_text(text, custom_stopwords, apply_stemming, custom_stems, auto_stopwords, auto_stemming):
     if not isinstance(text, str):
         return ''
+    
     text = re.sub(r'[^\x00-\x7F]+', ' ', text)
     text = re.sub(r'[^a-zA-Z\s]', ' ', text)
-    text = re.sub(r'[.?]', '', text)
     text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
-    emoji_pattern = re.compile(
-    "["
-    u"\U0001F600-\U0001F64F"  # emoticon wajah
-    u"\U0001F300-\U0001F5FF"  # simbol dan pictographs
-    u"\U0001F680-\U0001F6FF"  # transportasi dan simbol
-    u"\U0001F1E0-\U0001F1FF"  # flags
-    u"\U00002700-\U000027BF"  # simbol lainnya
-    u"\U0001F900-\U0001F9FF"  # emoji tambahan
-    u"\U00002600-\U000026FF"  # simbol lainnya
-    u"\U0000200D"             # Zero Width Joiner
-    u"\U00002300-\U000023FF"  # simbol tambahan
-    u"\U0001FA70-\U0001FAFF"  # emoji lain (kompatibilitas baru)
-    "]+", flags=re.UNICODE
-)
+
+    emoji_pattern = re.compile("["
+        u"\U0001F600-\U0001F64F" u"\U0001F300-\U0001F5FF"
+        u"\U0001F680-\U0001F6FF" u"\U0001F1E0-\U0001F1FF"
+        u"\U00002700-\U000027BF" u"\U0001F900-\U0001F9FF"
+        u"\U00002600-\U000026FF" u"\U0000200D"
+        u"\U00002300-\U000023FF" u"\U0001FA70-\U0001FAFF"
+    "]+", flags=re.UNICODE)
     text = emoji_pattern.sub(r'', text)
+
     text = replace_abbreviations(text)
-    words = word_tokenize(text.lower())
+    words = text.lower().split()
 
-    custom_stopwords = [
-    'nya', 'ya', 'halo', 'coba', 'quot', 'sih', 'nih', 'dong', 'kayak', 'banget',
-    'liat', 'aja', 'gitu', 'ampun', 'makasih', 'terima', 'kasih', 'bang', 'deh',
-    'dong', 'loh', 'lah', 'nyaa', 'yaa', 'uh', 'wkwk', 'wkwkwk', 'hehe', 'huhu',
-    'hehehe', 'hadeh', 'waduh', 'aduh', 'hmm', 'hmmm', 'eh', 'yaudah', 'nggak',
-    'ngga', 'ga', 'gak', 'kok', 'padahal', 'doang', 'biar', 'malah', 'jangan',
-    'boleh', 'udah', 'sudah', 'baru', 'tuh', 'kan', 'itu', 'ini', 'gini', 'gituan',
-    'nanti', 'besok', 'hari', 'mbak', 'mas', 'bro', 'sis', 'woy', 'oi', 'sob',
-    'agan', 'gan', 'min', 'admin', 'anda', 'saya', 'aku', 'gue', 'elo', 'loe',
-    'lu', 'gua', 'kamu', 'dia', 'kalian', 'mereka', 'kita', 'kami', 'pun', 'toh',
-    'lagi', 'terus', 'terusnya', 'terlalu', 'sama', 'yang', 'seperti', 'daripada',
-    'atau', 'dan', 'tapi', 'kalau', 'jadi', 'dari', 'buat', 'untuk', 'agar',
-    'karena', 'sebab', 'oleh', 'dengan', 'tanpa', 'tentang', 'meskipun', 'namun',
-    'bahkan', 'misalnya', 'contohnya', 'dll', 'dst', 'dsb', 'etc', 'ok', 'oke',
-    'okay', 'sip', 'mantap', 'nice', 'thanks', 'thank', 'thankyou', 'btw', 'imo',
-    'idk', 'cmiiw', 'wfm', 'yoi', 'yuk', 'ayo', 'nah', 'ngapain', 'siapa',
-    'dimana', 'kapan', 'kenapa', 'bagaimana', 'hahaha', 'hahahaha', 'lmao', 'lol',
-    'wtf', 'astaga', 'astagfirullah', 'inshaallah', 'insyaallah', 'alhamdulillah',
-    'masyaallah', 'subhanallah',
+    # ✅ Tambahkan default stopword tetap (gabungan otomatis & manual)
+    default_stopwords = [
+        'nya', 'ya', 'halo','lah','yaa','dih','apaan', 'coba', 'quot', 'sih', 'nih', 'dong', 'kayak', 'banget',
+        'liat', 'aja', 'gitu', 'ampun', 'makasih', 'terima', 'kasih', 'bang', 'deh',
+        'dong', 'loh', 'lah', 'nyaa', 'yaa', 'uh', 'wkwk', 'wkwkwk', 'hehe', 'huhu',
+        'hehehe', 'hadeh', 'waduh', 'aduh', 'hmm', 'hmmm', 'eh', 'yaudah', 'nggak',
+        'ngga', 'ga', 'gak', 'kok', 'padahal', 'doang', 'biar', 'malah', 'jangan',
+        'boleh', 'udah', 'sudah', 'baru', 'tuh', 'kan', 'itu', 'ini', 'gini', 'gituan',
+        'nanti', 'besok', 'hari', 'mbak', 'mas', 'bro', 'sis', 'woy', 'oi', 'sob',
+        'agan', 'gan', 'min', 'admin', 'anda', 'saya', 'aku', 'gue', 'elo', 'loe',
+        'lu', 'gua', 'kamu', 'dia', 'kalian', 'mereka', 'kita', 'kami', 'pun', 'toh',
+        'lagi', 'terus', 'terusnya', 'terlalu', 'sama', 'yang', 'seperti', 'daripada',
+        'atau', 'dan', 'tapi', 'kalau', 'jadi', 'dari', 'buat', 'untuk', 'agar',
+        'karena', 'sebab', 'oleh', 'dengan', 'tanpa', 'tentang', 'meskipun', 'namun',
+        'bahkan', 'misalnya', 'contohnya', 'dll', 'dst', 'dsb', 'etc', 'ok', 'oke',
+        'okay', 'sip', 'mantap', 'nice', 'thanks', 'thank', 'thankyou', 'btw', 'imo',
+        'idk', 'cmiiw', 'wfm', 'yoi', 'yuk', 'ayo', 'nah', 'ngapain', 'siapa',
+        'dimana', 'kapan', 'kenapa', 'bagaimana', 'hahaha', 'hahahaha', 'lmao', 'lol',
+        'wtf', 'astaga', 'astagfirullah', 'inshaallah', 'insyaallah', 'alhamdulillah',
+        'masyaallah', 'subhanallah',
+        # Kata netral
+        'orang', 'presiden', 'prabowo', 'manusia', 'pacar', 'anak', 'laki', 'wanita',
+        'hidup', 'tanggung', 'hukum', 'korban', 'bayar', 'tv', 'jeep', 'pinggir',
+        # Sosial media umum
+        'komen', 'video', 'judul', 'konten', 'caption', 'story', 'stream', 'live',
+        'nonton', 'like', 'subscribe', 'share', 'streamer'
+    ]
 
-    # Kata-kata netral tidak bermakna sentimen
-    'orang', 'presiden', 'prabowo', 'manusia', 'pacar', 'anak', 'laki', 'wanita',
-    'hidup', 'tanggung', 'hukum', 'korban', 'bayar', 'tv', 'jeep', 'pinggir',
-
-    # Tambahan umum sosial media
-    'komen', 'video', 'judul', 'konten', 'caption', 'story', 'stream', 'live',
-    'nonton', 'like', 'subscribe', 'share', 'streamer'
-]
-
-
-    stop_words = set(stopwords.words('indonesian')) if auto_stopwords else set()
-    stop_words = set(custom_stopwords)
+    stop_words = set(default_stopwords + custom_stopwords)
     words = [w for w in words if w not in stop_words]
 
-    if auto_stemming:
-        words = [stemmer.stem(w) for w in words]
-    elif apply_stemming:
-        words = [custom_stems.get(w, stemmer.stem(w)) for w in words]
+    if auto_stemming or apply_stemming:
+        if apply_stemming:
+            words = [custom_stems.get(w, stemmer.stem(w)) for w in words]
+        else:
+            words = [stemmer.stem(w) for w in words]
 
     return " ".join(words)
+
 
 def apply_label(text, positive_words, negative_words, threshold=0.1, prefer_dominant=True):
     words = text.split()
     total = len(words) if len(words) > 0 else 1
-
     pos = sum(1 for w in words if w in positive_words)
     neg = sum(1 for w in words if w in negative_words)
-
     pos_score = pos / total
     neg_score = neg / total
 
@@ -151,8 +138,6 @@ def apply_label(text, positive_words, negative_words, threshold=0.1, prefer_domi
             elif neg > pos:
                 return "Negatif"
         return "Netral"
-
-
 
 def load_words_from_file(path):
     try:
@@ -231,12 +216,11 @@ def show():
                     lambda x: clean_text(x, custom_stop, manual_stem, custom_stem, auto_stop, auto_stem)
                 )
 
-                # Jalankan labeling hanya jika user memilih opsi kamus
                 if use_auto_dict or manual_label:
                     st.session_state.df["Label"] = st.session_state.df[text_col].apply(
                         lambda x: apply_label(x, pos_words, neg_words)
                     )
-                    st.info("Menggunakan kamus manual untuk analisis sentimen")
+                    st.info("Labeling sentimen selesai.")
 
                 st.subheader("✅ Dataset Setelah Preprocessing & Labeling")
                 st.write(st.session_state.df.head())
