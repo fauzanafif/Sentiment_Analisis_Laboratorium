@@ -1,6 +1,6 @@
 import nltk
 import nltk
-nltk.data.path.append('./nltk_data')
+nltk.data.path.append('./nltk data')
 import streamlit as st
 import pandas as pd
 import re
