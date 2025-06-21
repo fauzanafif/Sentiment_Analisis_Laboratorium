@@ -1,28 +1,28 @@
 # === Core Streamlit App ===
-streamlit
-pandas
-numpy
+streamlit>=1.31.1
+pandas>=1.5.3
+numpy>=1.21.6
 
-# === Scraping ===
-tweepy
-google-api-python-client
-google-play-scraper
+# === Scraping (modul lain) ===
+tweepy>=4.14.0
+google-api-python-client>=2.121.0
+google-play-scraper>=1.2.3
 
 # === Preprocessing Bahasa Indonesia ===
-Sastrawi
+Sastrawi>=1.0.1
 
 # === Modeling & Machine Learning ===
 scikit-learn==1.2.2
 imbalanced-learn==0.10.1
 
 # === Visualisasi ===
-matplotlib
-seaborn
-wordcloud
+matplotlib>=3.7.1
+seaborn>=0.12.2
+wordcloud>=1.9.3
 
-# === Ekspor Excel / Download Support ===
-openpyxl
-xlsxwriter
+# === Ekspor Excel/Download Support ===
+openpyxl>=3.1.2
+XlsxWriter>=3.1.9
 
 # === Tambahan Umum ===
-Pillow
+Pillow>=10.2.0
