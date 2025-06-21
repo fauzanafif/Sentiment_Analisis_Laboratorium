@@ -3,7 +3,7 @@ streamlit
 pandas
 numpy
 
-# === Scraping ===
+# === Scraping (di modul lain, tetap dibutuhkan) ===
 tweepy
 google-api-python-client
 google-play-scraper
@@ -13,7 +13,7 @@ Sastrawi
 
 # === Modeling & Machine Learning ===
 scikit-learn
-imblearn
+imbalanced-learn
 
 # === Visualisasi ===
 matplotlib
@@ -21,6 +21,7 @@ seaborn
 wordcloud
 
 # === Ekspor Excel/Download Support ===
+openpyxl
 xlsxwriter
 
 # === Tambahan Umum ===

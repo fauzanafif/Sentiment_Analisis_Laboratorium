@@ -119,7 +119,8 @@ def show():
 
                 try:
                     ros = RandomOverSampler(random_state=42)
-                    X_train_resampled, y_train_resampled = ros.fit_resample(X_train, y_train)
+                    X_train_resampled, y_train_resampled = ros.fit_resample(X_train.toarray(), y_train)
+                    X_test = X_test.toarray()
                 except Exception as e:
                     st.error(f"❌ Gagal melakukan oversampling: {e}")
                     return
