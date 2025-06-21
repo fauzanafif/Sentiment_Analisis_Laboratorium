@@ -118,9 +118,11 @@ def show():
                     return
 
                 try:
+                    # Konversi X_train dan X_test ke tipe array terlebih dahulu sebelum oversampling
+                    X_train_array = X_train.toarray()
+                    X_test_array = X_test.toarray()
                     ros = RandomOverSampler(random_state=42)
-                    X_train_resampled, y_train_resampled = ros.fit_resample(X_train.toarray(), y_train)
-                    X_test = X_test.toarray()
+                    X_train_resampled, y_train_resampled = ros.fit_resample(X_train_array, y_train)
                 except Exception as e:
                     st.error(f"❌ Gagal melakukan oversampling: {e}")
                     return
@@ -131,7 +133,7 @@ def show():
             for model_name in model_names:
                 with st.spinner(f"Melatih model {model_name}..."):
                     try:
-                        accuracy, precision, recall, f1 = train_model(model_name, X_train_resampled, X_test, y_train_resampled, y_test)
+                        accuracy, precision, recall, f1 = train_model(model_name, X_train_resampled, X_test_array, y_train_resampled, y_test)
                         if accuracy is not None:
                             metrics.append({
                                 'Model': model_name,
@@ -162,7 +164,7 @@ def show():
                     metrics_df.to_excel(writer, index=False, sheet_name='Performa Model')
 
                 st.download_button(
-                    label="📥 Unduh Tabel Performa Model (Excel)",
+                    label="📅 Unduh Tabel Performa Model (Excel)",
                     data=excel_buffer.getvalue(),
                     file_name="performa_model.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -179,7 +181,7 @@ def show():
                     st.pyplot(fig_wc, use_container_width=True)
 
                     st.download_button(
-                        "📥 Unduh WordCloud",
+                        "📅 Unduh WordCloud",
                         data=fig_to_bytes(fig_wc),
                         file_name="wordcloud_utama.png",
                         mime="image/png",
@@ -200,7 +202,7 @@ def show():
                     st.pyplot(fig_bar, use_container_width=True)
 
                     st.download_button(
-                        "📥 Unduh Grafik Model",
+                        "📅 Unduh Grafik Model",
                         data=fig_to_bytes(fig_bar),
                         file_name="perbandingan_model.png",
                         mime="image/png",
@@ -219,7 +221,7 @@ def show():
                     st.pyplot(fig_pie, use_container_width=True)
 
                     st.download_button(
-                        "📥 Unduh Distribusi Sentimen",
+                        "📅 Unduh Distribusi Sentimen",
                         data=fig_to_bytes(fig_pie),
                         file_name="distribusi_sentimen.png",
                         mime="image/png",
@@ -240,7 +242,7 @@ def show():
                     ax.imshow(wc, interpolation='bilinear')
                     ax.axis("off")
                     st.pyplot(fig, use_container_width=True)
-                    st.download_button(f"📥 Unduh WordCloud {label.capitalize()}", data=fig_to_bytes(fig), file_name=f"wordcloud_{label}.png", mime="image/png", use_container_width=True)
+                    st.download_button(f"📅 Unduh WordCloud {label.capitalize()}", data=fig_to_bytes(fig), file_name=f"wordcloud_{label}.png", mime="image/png", use_container_width=True)
                 except Exception as e:
                     st.warning(f"⚠️ WordCloud untuk '{label}' gagal: {e}")
 
@@ -249,7 +251,7 @@ def show():
                 safe_wordcloud("positif", "Greens")
 
             with col_neg:
-                st.markdown("🚫 **Negatif**")
+                st.markdown("❌ **Negatif**")
                 safe_wordcloud("negatif", "Reds")
 
             with col_neu:
