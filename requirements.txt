@@ -1,15 +1,27 @@
+# === Core Streamlit App ===
 streamlit
-pillow
 pandas
+numpy
+
+# === Scraping ===
+tweepy
+google-api-python-client
+google-play-scraper
+
+# === Preprocessing Bahasa Indonesia ===
+Sastrawi
+
+# === Modeling & Machine Learning ===
+scikit-learn
+imblearn
+
+# === Visualisasi ===
 matplotlib
 seaborn
 wordcloud
-scikit-learn
-imblearn
-fpdf
-nltk
-Sastrawi
-google-api-python-client
-google-play-scraper
-tweepy
-TikTokApi
+
+# === Ekspor Excel/Download Support ===
+xlsxwriter
+
+# === Tambahan Umum ===
+Pillow
