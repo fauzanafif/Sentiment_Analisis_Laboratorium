@@ -54,33 +54,35 @@ abbreviation_dict = {
     "afk": "away from keyboard", "asap": "as soon as possible"
 }
 
+
+
 def replace_abbreviations(text):
     words = text.lower().split()
     replaced = [abbreviation_dict.get(word, word) for word in words]
     return ' '.join(replaced)
 
 def clean_text(text, custom_stopwords, apply_stemming, custom_stems, auto_stopwords, auto_stemming):
-    if not isinstance(text, str):
-        return ''
-    
-    text = re.sub(r'[^\x00-\x7F]+', ' ', text)
-    text = re.sub(r'[^a-zA-Z\s]', ' ', text)
-    text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
+    try:
+        if not isinstance(text, str):
+            return ''
+        
+        text = re.sub(r'[^\x00-\x7F]+', ' ', text)
+        text = re.sub(r'[^a-zA-Z\s]', ' ', text)
+        text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
 
-    emoji_pattern = re.compile("["
-        u"\U0001F600-\U0001F64F" u"\U0001F300-\U0001F5FF"
-        u"\U0001F680-\U0001F6FF" u"\U0001F1E0-\U0001F1FF"
-        u"\U00002700-\U000027BF" u"\U0001F900-\U0001F9FF"
-        u"\U00002600-\U000026FF" u"\U0000200D"
-        u"\U00002300-\U000023FF" u"\U0001FA70-\U0001FAFF"
-    "]+", flags=re.UNICODE)
-    text = emoji_pattern.sub(r'', text)
+        emoji_pattern = re.compile("[" 
+            u"\U0001F600-\U0001F64F" u"\U0001F300-\U0001F5FF"
+            u"\U0001F680-\U0001F6FF" u"\U0001F1E0-\U0001F1FF"
+            u"\U00002700-\U000027BF" u"\U0001F900-\U0001F9FF"
+            u"\U00002600-\U000026FF" u"\U0000200D"
+            u"\U00002300-\U000023FF" u"\U0001FA70-\U0001FAFF"
+        "]+", flags=re.UNICODE)
+        text = emoji_pattern.sub(r'', text)
 
-    text = replace_abbreviations(text)
-    words = text.lower().split()
+        text = replace_abbreviations(text)
+        words = text.lower().split()
 
-    # ✅ Tambahkan default stopword tetap (gabungan otomatis & manual)
-    default_stopwords = [
+        default_stopwords = [
         'nya', 'ya', 'halo','lah','yaa','dih','apaan', 'coba', 'quot', 'sih', 'nih', 'dong', 'kayak', 'banget',
         'liat', 'aja', 'gitu', 'ampun', 'makasih', 'terima', 'kasih', 'bang', 'deh', 'di',
         'dong', 'loh', 'lah', 'nyaa', 'yaa', 'uh', 'wkwk', 'wkwkwk', 'hehe', 'huhu',
@@ -107,36 +109,43 @@ def clean_text(text, custom_stopwords, apply_stemming, custom_stems, auto_stopwo
         'nonton', 'like', 'subscribe', 'share', 'streamer'
     ]
 
-    stop_words = set(default_stopwords + custom_stopwords)
-    words = [w for w in words if w not in stop_words]
+        stop_words = set(default_stopwords + custom_stopwords)
+        words = [w for w in words if w not in stop_words]
 
-    if auto_stemming or apply_stemming:
-        if apply_stemming:
-            words = [custom_stems.get(w, stemmer.stem(w)) for w in words]
-        else:
-            words = [stemmer.stem(w) for w in words]
+        if auto_stemming or apply_stemming:
+            if apply_stemming:
+                words = [custom_stems.get(w, stemmer.stem(w)) for w in words]
+            else:
+                words = [stemmer.stem(w) for w in words]
 
-    return " ".join(words)
+        return " ".join(words)
 
+    except Exception as e:
+        st.warning(f"⚠️ Gagal membersihkan teks: {e}")
+        return ""
 
 def apply_label(text, positive_words, negative_words, threshold=0.1, prefer_dominant=True):
-    words = text.split()
-    total = len(words) if len(words) > 0 else 1
-    pos = sum(1 for w in words if w in positive_words)
-    neg = sum(1 for w in words if w in negative_words)
-    pos_score = pos / total
-    neg_score = neg / total
+    try:
+        words = text.split()
+        total = len(words) if len(words) > 0 else 1
+        pos = sum(1 for w in words if w in positive_words)
+        neg = sum(1 for w in words if w in negative_words)
+        pos_score = pos / total
+        neg_score = neg / total
 
-    if pos_score - neg_score > threshold:
-        return "Positif"
-    elif neg_score - pos_score > threshold:
-        return "Negatif"
-    else:
-        if prefer_dominant:
-            if pos > neg:
-                return "Positif"
-            elif neg > pos:
-                return "Negatif"
+        if pos_score - neg_score > threshold:
+            return "Positif"
+        elif neg_score - pos_score > threshold:
+            return "Negatif"
+        else:
+            if prefer_dominant:
+                if pos > neg:
+                    return "Positif"
+                elif neg > pos:
+                    return "Negatif"
+            return "Netral"
+    except Exception as e:
+        st.warning(f"⚠️ Gagal menentukan label: {e}")
         return "Netral"
 
 def load_words_from_file(path):
@@ -144,6 +153,10 @@ def load_words_from_file(path):
         with open(path, 'r', encoding='utf-8') as f:
             return [line.strip().lower() for line in f if line.strip()]
     except FileNotFoundError:
+        st.warning(f"📁 File tidak ditemukan: {path}")
+        return []
+    except Exception as e:
+        st.warning(f"⚠️ Gagal memuat file {path}: {e}")
         return []
 
 def show():
@@ -151,7 +164,11 @@ def show():
 
     uploaded_file = st.file_uploader("📂 Unggah Dataset (CSV)", type=["csv"])
     if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file)
+        try:
+            df = pd.read_csv(uploaded_file)
+        except Exception as e:
+            st.error(f"❌ Gagal membaca file CSV: {e}")
+            return
 
         if 'df' not in st.session_state:
             st.session_state.df = df
@@ -159,18 +176,20 @@ def show():
         st.subheader("📊 Dataset Asli")
         st.dataframe(st.session_state.df, use_container_width=True, height=500)
 
-
         st.sidebar.header("⚙️ Pengaturan Preprocessing")
 
-        if st.sidebar.checkbox("Hapus Kolom"):
-            cols = st.sidebar.multiselect("Pilih kolom", st.session_state.df.columns.tolist())
-            st.session_state.df.drop(columns=cols, inplace=True)
+        try:
+            if st.sidebar.checkbox("Hapus Kolom"):
+                cols = st.sidebar.multiselect("Pilih kolom", st.session_state.df.columns.tolist())
+                st.session_state.df.drop(columns=cols, inplace=True)
 
-        if st.sidebar.checkbox("Rename Kolom"):
-            for col in st.session_state.df.columns:
-                new_col = st.sidebar.text_input(f"Rename '{col}'", value=col)
-                if new_col != col:
-                    st.session_state.df.rename(columns={col: new_col}, inplace=True)
+            if st.sidebar.checkbox("Rename Kolom"):
+                for col in st.session_state.df.columns:
+                    new_col = st.sidebar.text_input(f"Rename '{col}'", value=col)
+                    if new_col != col:
+                        st.session_state.df.rename(columns={col: new_col}, inplace=True)
+        except Exception as e:
+            st.warning(f"⚠️ Gagal memodifikasi kolom: {e}")
 
         manual_stop = st.sidebar.checkbox("Stopword Manual")
         auto_stop = st.sidebar.checkbox("Stopword Otomatis")
@@ -185,7 +204,10 @@ def show():
         if manual_stem:
             stem_input = st.sidebar.text_area("Custom Stem (kata:stem)", "")
             if stem_input:
-                custom_stem = {i.split(":")[0].strip(): i.split(":")[1].strip() for i in stem_input.split(",") if ":" in i}
+                try:
+                    custom_stem = {i.split(":")[0].strip(): i.split(":")[1].strip() for i in stem_input.split(",") if ":" in i}
+                except Exception as e:
+                    st.warning(f"⚠️ Format stem manual salah: {e}")
 
         st.sidebar.header("📌 Label Sentimen")
         use_auto_dict = st.sidebar.checkbox("Gunakan Kamus Otomatis")
@@ -195,8 +217,6 @@ def show():
         if use_auto_dict:
             pos_words = load_words_from_file("assets/positive.txt")
             neg_words = load_words_from_file("assets/negative.txt")
-            if not pos_words or not neg_words:
-                st.warning("File kamus otomatis tidak ditemukan di folder 'assets'.")
 
         manual_label = st.sidebar.checkbox("Label Manual")
         if manual_label:
@@ -206,35 +226,37 @@ def show():
             neg_words += [w.strip().lower() for w in neg_input.split(",") if w.strip()]
 
         if st.sidebar.button("🔧 Jalankan Preprocessing"):
-            text_col = None
-            for col in st.session_state.df.columns:
-                if st.session_state.df[col].dtype == 'object':
-                    text_col = col
-                    break
+            try:
+                text_col = None
+                for col in st.session_state.df.columns:
+                    if st.session_state.df[col].dtype == 'object':
+                        text_col = col
+                        break
 
-            if text_col:
-                st.session_state.df[text_col] = st.session_state.df[text_col].apply(
-                    lambda x: clean_text(x, custom_stop, manual_stem, custom_stem, auto_stop, auto_stem)
-                )
-
-                if use_auto_dict or manual_label:
-                    st.session_state.df["Label"] = st.session_state.df[text_col].apply(
-                        lambda x: apply_label(x, pos_words, neg_words)
+                if text_col:
+                    st.session_state.df[text_col] = st.session_state.df[text_col].apply(
+                        lambda x: clean_text(x, custom_stop, manual_stem, custom_stem, auto_stop, auto_stem)
                     )
-                    st.info("Labeling sentimen selesai.")
 
-                st.subheader("✅ Dataset Setelah Preprocessing & Labeling")
-                st.dataframe(st.session_state.df, use_container_width=True, height=500)
+                    if use_auto_dict or manual_label:
+                        st.session_state.df["Label"] = st.session_state.df[text_col].apply(
+                            lambda x: apply_label(x, pos_words, neg_words)
+                        )
+                        st.info("Labeling sentimen selesai.")
 
+                    st.subheader("✅ Dataset Setelah Preprocessing & Labeling")
+                    st.dataframe(st.session_state.df, use_container_width=True, height=500)
 
-                st.download_button(
-                    label="💾 Unduh Dataset",
-                    data=st.session_state.df.to_csv(index=False),
-                    file_name="processed_data.csv",
-                    mime="text/csv"
-                )
-            else:
-                st.error("Tidak ditemukan kolom teks dalam dataset.")
+                    st.download_button(
+                        label="💾 Unduh Dataset",
+                        data=st.session_state.df.to_csv(index=False),
+                        file_name="processed_data.csv",
+                        mime="text/csv"
+                    )
+                else:
+                    st.error("❌ Tidak ditemukan kolom teks dalam dataset.")
+            except Exception as e:
+                st.error(f"❌ Terjadi kesalahan saat preprocessing: {e}")
 
 if __name__ == "__main__":
     show()

@@ -70,7 +70,7 @@ def scrape_playstore(app_id, count=2000):
             })
         return reviews_data
     except Exception as e:
-        st.error(f"Error scraping PlayStore: {str(e)}")
+        st.error(f"❌ Gagal mengambil data dari Play Store. Pastikan ID aplikasi valid dan tersedia di Play Store.\nDetail: {str(e)}")
         return []
 
 def scrape_twitter_v2(bearer_token, query, count=10):
@@ -87,9 +87,14 @@ def scrape_twitter_v2(bearer_token, query, count=10):
                     "Likes": tweet.public_metrics.get('like_count', 0),
                     "Retweet": tweet.public_metrics.get('retweet_count', 0)
                 })
+        else:
+            st.warning("⚠️ Tidak ada tweet ditemukan untuk query tersebut.")
         return results
+    except tweepy.errors.Unauthorized:
+        st.error("❌ Token Twitter tidak valid atau tidak memiliki akses.")
+        return []
     except Exception as e:
-        st.error(f"Error scraping Twitter: {str(e)}")
+        st.error(f"❌ Gagal mengambil data dari Twitter. Detail: {str(e)}")
         return []
 
 def video_comments(api_key, video_id):
@@ -99,30 +104,26 @@ def video_comments(api_key, video_id):
         video_response = youtube.commentThreads().list(part='snippet,replies', videoId=video_id).execute()
 
         while video_response:
-            for item in video_response['items']:
-                published = item['snippet']['topLevelComment']['snippet']['publishedAt']
-                user = item['snippet']['topLevelComment']['snippet']['authorDisplayName']
-                comment = item['snippet']['topLevelComment']['snippet']['textDisplay']
-                likeCount = item['snippet']['topLevelComment']['snippet']['likeCount']
-                replies.append({
-                    "Tanggal": published,
-                    "User": user,
-                    "Komentar": comment,
-                    "Likes": likeCount
-                })
+            for item in video_response.get('items', []):
+                try:
+                    comment_info = item['snippet']['topLevelComment']['snippet']
+                    replies.append({
+                        "Tanggal": comment_info['publishedAt'],
+                        "User": comment_info['authorDisplayName'],
+                        "Komentar": comment_info['textDisplay'],
+                        "Likes": comment_info['likeCount']
+                    })
 
-                if item['snippet']['totalReplyCount'] > 0:
-                    for reply in item['replies']['comments']:
-                        published = reply['snippet']['publishedAt']
-                        user = reply['snippet']['authorDisplayName']
-                        repl = reply['snippet']['textDisplay']
-                        likeCount = reply['snippet']['likeCount']
+                    for reply in item.get('replies', {}).get('comments', []):
+                        reply_info = reply['snippet']
                         replies.append({
-                            "Tanggal": published,
-                            "User": user,
-                            "Komentar": repl,
-                            "Likes": likeCount
+                            "Tanggal": reply_info['publishedAt'],
+                            "User": reply_info['authorDisplayName'],
+                            "Komentar": reply_info['textDisplay'],
+                            "Likes": reply_info['likeCount']
                         })
+                except KeyError:
+                    continue
 
             if 'nextPageToken' in video_response:
                 video_response = youtube.commentThreads().list(
@@ -133,12 +134,14 @@ def video_comments(api_key, video_id):
             else:
                 break
     except HttpError as e:
-        st.error(f"API Error: {str(e)}")
+        st.error("❌ Gagal mengambil komentar YouTube. Periksa API Key atau ID video.")
         return []
     except Exception as e:
-        st.error(f"Terjadi kesalahan: {str(e)}")
+        st.error(f"❌ Terjadi kesalahan saat mengambil komentar YouTube. Detail: {str(e)}")
         return []
 
+    if not replies:
+        st.warning("⚠️ Tidak ada komentar ditemukan atau video tidak memiliki komentar publik.")
     return replies
 
 def show():
@@ -179,9 +182,8 @@ def show():
                     st.session_state.scraped_columns = df.columns
                 else:
                     st.session_state.scraped_data = None
-                    st.warning("Tidak ada komentar ditemukan atau Video ID salah.")
             else:
-                st.warning("Silakan masukkan API Key dan Video ID.")
+                st.warning("⚠️ Silakan masukkan API Key dan Video ID.")
 
     elif platform == 'twitter':
         st.subheader("🐦 Scraping Twitter")
@@ -199,9 +201,8 @@ def show():
                     st.session_state.scraped_columns = df.columns
                 else:
                     st.session_state.scraped_data = None
-                    st.warning("Tidak ada data ditemukan atau terjadi kesalahan.")
             else:
-                st.warning("Silakan lengkapi Bearer Token dan Query.")
+                st.warning("⚠️ Silakan lengkapi Bearer Token dan Query.")
 
     elif platform == 'playstore':
         st.subheader("📱 Scraping PlayStore")
@@ -217,9 +218,8 @@ def show():
                     st.session_state.scraped_columns = df.columns
                 else:
                     st.session_state.scraped_data = None
-                    st.warning("Tidak ada data ditemukan atau terjadi kesalahan.")
             else:
-                st.warning("Silakan masukkan ID aplikasi.")
+                st.warning("⚠️ Silakan masukkan ID aplikasi.")
 
     if st.session_state.scraped_data is not None:
         st.markdown("### 📋 Data yang telah di-scrape:")
