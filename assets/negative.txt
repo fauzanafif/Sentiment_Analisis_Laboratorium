@@ -2002,6 +2002,8 @@ semrawut
 sendirian
 sengit
 sensasi
+kurang baik
+kurang
 sensasional
 sensasionil
 sentakan
@@ -2048,6 +2050,11 @@ sok nasehati
 sok ngatur
 sombong
 sporadis
+Buruk
+tolol
+sadis
+gabisa
+tidak bisa
 stagnasi
 statis
 steal

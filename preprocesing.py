@@ -10,7 +10,7 @@ abbreviation_dict = {
     # Negasi
     "tdk": "tidak", "gak": "tidak", "ga": "tidak","gk":"tidak","engga":"tidak", "jgn": "jangan", 
     "blm": "belum", "bkn": "bukan", "br":"baru","aja":"saja","bcra":"bicara", "gede":"besar"
-    ,"ws":"sudah","sja":"saja","sja":"saja","jwb":"jawab","y":"iya"
+    ,"ws":"sudah","sja":"saja","sja":"saja","jwb":"jawab","y":"iya",'nda':"tidak"
     # Kata ganti
     ,"sy": "saya", "aku": "aku", "gw": "gue", "lu": "lo", "sdah":"sudah","koq":" ","wes":"sudah"
     ,"mrk": "mereka", "kmu": "kamu", "kalian": "kalian", "jd":"jadi","gj":"tidak jelas"
@@ -82,7 +82,7 @@ def clean_text(text, custom_stopwords, apply_stemming, custom_stems, auto_stopwo
     # ✅ Tambahkan default stopword tetap (gabungan otomatis & manual)
     default_stopwords = [
         'nya', 'ya', 'halo','lah','yaa','dih','apaan', 'coba', 'quot', 'sih', 'nih', 'dong', 'kayak', 'banget',
-        'liat', 'aja', 'gitu', 'ampun', 'makasih', 'terima', 'kasih', 'bang', 'deh',
+        'liat', 'aja', 'gitu', 'ampun', 'makasih', 'terima', 'kasih', 'bang', 'deh', 'di',
         'dong', 'loh', 'lah', 'nyaa', 'yaa', 'uh', 'wkwk', 'wkwkwk', 'hehe', 'huhu',
         'hehehe', 'hadeh', 'waduh', 'aduh', 'hmm', 'hmmm', 'eh', 'yaudah', 'nggak',
         'ngga', 'ga', 'gak', 'kok', 'padahal', 'doang', 'biar', 'malah', 'jangan',
@@ -157,7 +157,8 @@ def show():
             st.session_state.df = df
 
         st.subheader("📊 Dataset Asli")
-        st.write(st.session_state.df.head())
+        st.dataframe(st.session_state.df, use_container_width=True, height=500)
+
 
         st.sidebar.header("⚙️ Pengaturan Preprocessing")
 
@@ -223,7 +224,8 @@ def show():
                     st.info("Labeling sentimen selesai.")
 
                 st.subheader("✅ Dataset Setelah Preprocessing & Labeling")
-                st.write(st.session_state.df.head())
+                st.dataframe(st.session_state.df, use_container_width=True, height=500)
+
 
                 st.download_button(
                     label="💾 Unduh Dataset",

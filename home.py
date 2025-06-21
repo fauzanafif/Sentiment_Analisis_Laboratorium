@@ -73,7 +73,7 @@ def show():
     st.markdown(
         """
         <div style="text-align: center; margin: 20px 0;">
-            <iframe src="https://www.youtube.com/embed/X9g_89SA9Bo" 
+            <iframe src="https://www.youtube.com/embed/lkBSCOUZBv4" 
             frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen style="border: 5px solid #483D8B; border-radius: 10px; width: 100%; max-width: 660px; height: auto; aspect-ratio: 16/9;"></iframe>
         </div>
@@ -92,22 +92,21 @@ def show():
 
     # Feature boxes with hover animation
     st.markdown(
-        """
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px;">
-            <div class="hover-box" style="flex: 1; min-width: 300px; max-width: 400px; background-color: #483D8B; color: white; padding: 20px; border-radius: 10px; text-align: center;">
-                <h3>EASY SCRAPING</h3>
-                <p>Scraping komentar untuk mendapatkan data dengan mudah dari platform seperti YouTube, X (Twitter), Play Store</p>
-            </div>
-            <div class="hover-box" style="flex: 1; min-width: 300px; max-width: 400px; background-color: #483D8B; color: white; padding: 20px; border-radius: 10px; text-align: center;">
-                <h3>EASY PREPROCESSING</h3>
-                <p>Preprocessing data lebih mudah dan cepat, dilengkapi fitur otomatis dan manual untuk kemudahan dan kedetailan pengguna</p>
-             </div>
-            <div class="hover-box" style="flex: 1; min-width: 300px; max-width: 400px; background-color: #483D8B; color: white; padding: 20px; border-radius: 10px; text-align: center;">
-                <h3>EASY MODELING</h3>
-                <p>Modeling cepat dengan 5 model populer: Naive Bayes, SVM, KNN, Random Forest, Adaboost</p>
-            </div>
+    """
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px;">
+        <div class="hover-box" style="flex: 1; min-width: 300px; max-width: 400px; background-color: #483D8B; padding: 20px; border-radius: 10px; text-align: center;">
+            <h3 style="color: white;">SCRAPING MUDAH</h3>
+            <p style="color: white;">Scraping komentar untuk mendapatkan data dengan mudah dari platform seperti YouTube, X (Twitter), Play Store</p>
         </div>
-        """, unsafe_allow_html=True)
+        <div class="hover-box" style="flex: 1; min-width: 300px; max-width: 400px; background-color: #483D8B; padding: 20px; border-radius: 10px; text-align: center;">
+            <h3 style="color: white;">PREPROCESSING MUDAH</h3>
+            <p style="color: white;">Preprocessing data lebih mudah dan cepat, dilengkapi fitur otomatis dan manual untuk kemudahan dan kedetailan pengguna</p>
+         </div>
+        <div class="hover-box" style="flex: 1; min-width: 300px; max-width: 400px; background-color: #483D8B; padding: 20px; border-radius: 10px; text-align: center;">
+            <h3 style="color: white;">MODELING MUDAH</h3>
+            <p style="color: white;">Modeling cepat dengan 5 model populer: Naive Bayes, SVM, KNN, Random Forest, Adaboost</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-# Panggil fungsi saat file dijalankan
-show()
+

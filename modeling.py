@@ -179,7 +179,7 @@ def show():
             with col3:
                 st.subheader("📊 Grafik Perbandingan Akurasi Model")
                 fig_bar, ax = plt.subplots(figsize=(10, 5))
-                sns.barplot(x='Model', y='Akurasi', data=metrics_df, ax=ax, palette='coolwarm')
+                sns.barplot(x='Model', y='Akurasi', data=metrics_df, ax=ax, palette='coolwarm', hue='Model', legend=False)
                 ax.set_ylim(0, 1)
                 st.pyplot(fig_bar, use_container_width=True)
 
