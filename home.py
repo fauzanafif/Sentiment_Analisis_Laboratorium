@@ -25,12 +25,27 @@ def show():
     }
 
     .hover-button {
+        padding: 10px 30px;
+        font-size: 18px;
+        cursor: pointer;
+        border: none;
+        background-color: #2196F3;
+        color: white;
+        border-radius: 5px;
+        font-weight: bold;
         transition: background-color 0.3s ease, transform 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
     }
 
     .hover-button:hover {
         background-color: #1769aa !important;
         transform: scale(1.05);
+    }
+
+    .centered {
+        text-align: center;
+        margin: 30px 0;
     }
 
     button:focus {
@@ -72,18 +87,19 @@ def show():
     # Video
     st.video("https://www.youtube.com/watch?v=lkBSCOUZBv4")
 
-    # Button with hover effect
+    # Tombol download PDF dari Google Drive
     st.markdown(
         """
-        <div style="text-align: center; margin: 20px 0;">
-            <button class="hover-button" style="padding: 10px 30px; font-size: 18px; cursor: pointer; border: none; background-color: #2196F3; color: white; border-radius: 5px; font-weight: bold;" 
-                    onclick="window.alert('Tutorial akan segera tersedia. Pantau terus update kami!')">
-                Panduan PDF
-            </button>
+        <div class="centered">
+            <a href="https://drive.google.com/uc?export=download&id=1-5psMYHHjp31WiDMWBEPajM8BuIqrvxW" target="_blank" class="hover-button">
+                📄 Panduan PDF
+            </a>
         </div>
-        """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
 
-    # Feature boxes with hover animation
+    # Feature boxes
     st.markdown(
     """
     <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px;">
@@ -101,5 +117,3 @@ def show():
         </div>
     </div>
     """, unsafe_allow_html=True)
-
-
