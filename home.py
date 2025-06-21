@@ -70,14 +70,7 @@ def show():
         """, unsafe_allow_html=True)
 
     # Video
-    st.markdown(
-        """
-        <div style="text-align: center; margin: 20px 0;">
-            <iframe src="https://www.youtube.com/embed/lkBSCOUZBv4" 
-            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen style="border: 5px solid #483D8B; border-radius: 10px; width: 100%; max-width: 660px; height: auto; aspect-ratio: 16/9;"></iframe>
-        </div>
-        """, unsafe_allow_html=True)
+    st.video("https://www.youtube.com/watch?v=lkBSCOUZBv4")
 
     # Button with hover effect
     st.markdown(
