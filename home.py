@@ -6,7 +6,6 @@ st.set_page_config(page_title="SENTILAB", layout="wide")
 def show():
     logo = Image.open("assets/sentilab.png")
 
-    # Tambahkan Google Font dan CSS interaktif
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
@@ -54,7 +53,6 @@ def show():
     </style>
     """, unsafe_allow_html=True)
 
-    # Header
     st.markdown(
     """
     <div style="text-align: center; background-color: #483D8B; padding: 10px; border-radius: 11px;">
@@ -65,7 +63,6 @@ def show():
     </div>
     """, unsafe_allow_html=True)
 
-    # Welcome title
     st.markdown(
         """
         <div style="text-align: center; margin-top: 20px;">
@@ -73,7 +70,6 @@ def show():
         </div>
         """, unsafe_allow_html=True)
 
-    # Welcome paragraph
     st.markdown(
         """
         <div style="text-align: center; font-size: 18px; line-height: 1.6; margin: 20px;">
@@ -84,7 +80,6 @@ def show():
         </div>
         """, unsafe_allow_html=True)
 
-    # Video
     st.video("https://www.youtube.com/watch?v=lkBSCOUZBv4")
 
     # Tombol download PDF dari Google Drive
@@ -99,7 +94,7 @@ def show():
         unsafe_allow_html=True
     )
 
-    # Feature boxes
+
     st.markdown(
     """
     <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px;">
