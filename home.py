@@ -80,7 +80,7 @@ def show():
         </div>
         """, unsafe_allow_html=True)
 
-    st.video("https://www.youtube.com/watch?v=lkBSCOUZBv4")
+    st.video("https://www.youtube.com/watch?v=xV3VIYpyZPg")
 
     # Tombol download PDF dari Google Drive
     st.markdown(
