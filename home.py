@@ -82,7 +82,6 @@ def show():
 
     st.video("https://www.youtube.com/watch?v=xV3VIYpyZPg")
 
-    # Tombol download PDF dari Google Drive
     st.markdown(
         """
         <div class="centered">
