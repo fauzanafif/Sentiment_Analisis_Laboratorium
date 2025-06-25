@@ -76,7 +76,7 @@ def show():
             " Selamat datang di website kami! Web ini dirancang untuk memudahkan pengguna dalam
             melakukan tugas-tugas berkaitan dengan analisis sentimen dengan antarmuka yang sederhana dan efisien.
             Kami berfokus untuk memberikan pengalaman terbaik dengan fitur-fitur yang mumpuni
-            namun mudah digunakan oleh siapapun "
+            namun mudah digunakan oleh siapapun yang membutuhkan tanpa Ngoding sama sekali. "
         </div>
         """, unsafe_allow_html=True)
 
