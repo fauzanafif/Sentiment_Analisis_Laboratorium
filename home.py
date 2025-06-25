@@ -83,15 +83,16 @@ def show():
     st.video("https://www.youtube.com/watch?v=xV3VIYpyZPg")
 
     st.markdown(
-        """
-        <div class="centered">
-            <a href="https://drive.google.com/uc?export=download&id=1-5psMYHHjp31WiDMWBEPajM8BuIqrvxW" target="_blank" class="hover-button">
-                📄 Panduan PDF
-            </a>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    """
+    <div class="centered">
+        <a href="https://drive.google.com/uc?export=download&id=1ORUuDsWnO6bRjGdz7g4SerTAszHcNPWa" target="_blank" class="hover-button">
+            📄 Unduh Panduan PDF
+        </a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 
 
     st.markdown(
