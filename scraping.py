@@ -152,7 +152,7 @@ def show():
         st.session_state.scraped_columns = []
 
     st.title("📊 Scraping Data Berbasis Web")
-    st.markdown("Selamat datang di aplikasi scraping data! Pilih platform yang ingin Anda scraping.")
+    st.markdown("Selamat datang di aplikasi scraping data! Pilih platform yang ingin Anda scraping dan jika ada kendala silahkan ikuti panduan PDF yang ada di halaman Home.")
 
     col1, col2, col3 = st.columns(3)
     with col1:
