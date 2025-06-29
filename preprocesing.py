@@ -244,6 +244,9 @@ def show():
                         )
                         st.info("Labeling sentimen selesai.")
 
+                    st.session_state.df = st.session_state.df[st.session_state.df[text_col].str.strip() != ""]
+                    st.session_state.df.dropna(inplace=True)
+
                     st.subheader("✅ Dataset Setelah Preprocessing & Labeling")
                     st.dataframe(st.session_state.df, use_container_width=True, height=500)
 
