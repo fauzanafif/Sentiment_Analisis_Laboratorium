@@ -118,7 +118,6 @@ def show():
                     return
 
                 try:
-                    # Konversi X_train dan X_test ke tipe array terlebih dahulu sebelum oversampling
                     X_train_array = X_train.toarray()
                     X_test_array = X_test.toarray()
                     ros = RandomOverSampler(random_state=42)
@@ -133,7 +132,9 @@ def show():
             for model_name in model_names:
                 with st.spinner(f"Melatih model {model_name}..."):
                     try:
-                        accuracy, precision, recall, f1 = train_model(model_name, X_train_resampled, X_test_array, y_train_resampled, y_test)
+                        accuracy, precision, recall, f1 = train_model(
+                            model_name, X_train_resampled, X_test_array, y_train_resampled, y_test
+                        )
                         if accuracy is not None:
                             metrics.append({
                                 'Model': model_name,
@@ -153,15 +154,30 @@ def show():
             st.success("✅ Semua model selesai dievaluasi!")
             metrics_df = pd.DataFrame(metrics)
 
+            # Ubah nilai metrik menjadi persentase (tetap dalam bentuk desimal 0.xx untuk formatting Excel)
+            col_list = ['Akurasi', 'Precision', 'Recall', 'F1-Score']
+
             col1, col2 = st.columns(2)
 
             with col1:
                 st.subheader("📊 Perbandingan Performa Model")
-                st.dataframe(metrics_df, use_container_width=True)
+                st.dataframe(metrics_df.style.format({
+                    'Akurasi': '{:.2%}',
+                    'Precision': '{:.2%}',
+                    'Recall': '{:.2%}',
+                    'F1-Score': '{:.2%}'
+                }), use_container_width=True)
 
+                # Export ke Excel dengan format persen
                 excel_buffer = io.BytesIO()
                 with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
                     metrics_df.to_excel(writer, index=False, sheet_name='Performa Model')
+                    workbook = writer.book
+                    worksheet = writer.sheets['Performa Model']
+                    percent_fmt = workbook.add_format({'num_format': '0.00%'})
+                    for col_idx, col_name in enumerate(metrics_df.columns):
+                        if col_name in col_list:
+                            worksheet.set_column(col_idx, col_idx, 12, percent_fmt)
 
                 st.download_button(
                     label="📅 Unduh Tabel Performa Model (Excel)",
@@ -196,9 +212,20 @@ def show():
             with col3:
                 st.subheader("📊 Grafik Perbandingan Akurasi Model")
                 try:
+                    metrics_df_plot = metrics_df.copy()
+                    metrics_df_plot['Akurasi'] = metrics_df_plot['Akurasi'] * 100
                     fig_bar, ax = plt.subplots(figsize=(10, 5))
-                    sns.barplot(x='Model', y='Akurasi', data=metrics_df, ax=ax, palette='coolwarm', hue='Model', legend=False)
-                    ax.set_ylim(0, 1)
+                    sns.barplot(x='Model', y='Akurasi', data=metrics_df_plot, ax=ax, palette='coolwarm', hue='Model', legend=False)
+                    ax.set_ylim(0, 100)
+                    ax.set_ylabel("Akurasi (%)")
+
+                    for p in ax.patches:
+                        ax.annotate(
+                            f"{p.get_height():.1f}%", 
+                            (p.get_x() + p.get_width() / 2., p.get_height()),
+                            ha='center', va='bottom', fontsize=9, color='black'
+                        )
+
                     st.pyplot(fig_bar, use_container_width=True)
 
                     st.download_button(
