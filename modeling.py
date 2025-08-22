@@ -55,14 +55,14 @@ def train_model(model_name, X_train, X_test, y_train, y_test):
     return accuracy, precision, recall, f1
 
 def model_quality(accuracy):
-    if accuracy < 0.6:
-        return "Buruk"
-    elif accuracy < 0.7:
-        return "Cukup"
-    elif accuracy < 0.8:
+    if accuracy == 1:
+        return "Sempurna"
+    elif 0.7 <= accuracy < 0.9:
         return "Baik"
+    elif accuracy < 0.5:
+        return "Buruk"
     else:
-        return "Sangat Baik"
+        return "Cukup"
 
 def fig_to_bytes(fig):
     buf = io.BytesIO()

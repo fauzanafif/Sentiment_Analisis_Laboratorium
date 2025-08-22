@@ -85,7 +85,7 @@ def show():
     st.markdown(
     """
     <div class="centered">
-        <a href="https://drive.google.com/uc?export=download&id=1ORUuDsWnO6bRjGdz7g4SerTAszHcNPWa" target="_blank" class="hover-button" 
+        <a href="https://drive.google.com/uc?export=download&id=1z0jZMPF50W2UW0EWH33qBhoN51HhT29e" target="_blank" class="hover-button" 
            style="padding: 10px 20px; background-color: #2196F3; color: white; border: none; border-radius: 5px; text-decoration: none; font-weight: bold;">
             📄 Unduh Panduan PDF
         </a>
