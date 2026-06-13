@@ -1,6 +1,6 @@
 # 🧠 SENTILAB — Sentiment Analysis Laboratory
 
-![SENTILAB](assets/logo.png)
+![SENTILAB](assets/sentilab.png)
 
 **SENTILAB (Sentiment Analysis Laboratory)** adalah aplikasi berbasis web yang digunakan untuk melakukan analisis sentimen secara otomatis menggunakan teknologi **Machine Learning** dan **Natural Language Processing (NLP)**.
 
